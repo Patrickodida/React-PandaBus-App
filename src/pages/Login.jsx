@@ -1,28 +1,38 @@
-import React, { useState } from "react";
-import { Link } from "react-router-dom";
+import React, { useState, useEffect } from "react";
+import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
 import validator from "validator";
-import { useNavigate } from "react-router-dom";
 import { storeUser } from "../UserHelper";
 import Navbar from '../components/Navbar';
 import Footer from "../components/Footer";
 
 function Login() {
   const [input, setInput] = useState({
-    identifier: "",
+    email: "",
     password: "",
   });
   const [errors, setErrors] = useState({
-    identifier: "",
+    email: "",
     password: "",
+    general: ""
   });
 
-  const validateEmail = (identifier) => {
-    if (!validator.isEmail(identifier)) {
-      setErrors({ ...errors, identifier: "Invalid email format." });
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    if (isLoggedIn) {
+      console.log("Navigating to booking page...");
+      navigate("/booking");
+    }
+  }, [isLoggedIn, navigate]);
+
+  const validateEmail = (email) => {
+    if (!validator.isEmail(email)) {
+      setErrors({ ...errors, email: "Invalid email format." });
       return false;
     }
-    setErrors({ ...errors, identifier: "" });
+    setErrors({ ...errors, email: "" });
     return true;
   };
 
@@ -38,13 +48,11 @@ function Login() {
     return true;
   };
 
-  const navigate = useNavigate();
-
   const handleSubmit = async (e) => {
     e.preventDefault();
 
     const isValid =
-      validateEmail(input.identifier) && validatePassword(input.password);
+      validateEmail(input.email) && validatePassword(input.password);
     if (!isValid) {
       return;
     }
@@ -54,19 +62,101 @@ function Login() {
         "http://localhost:6500/api/v1/users/login",
         input
       );
+      console.log(response);
 
-      if (!response.data.jwt) {
+      // Store token securely in localStorage
+      if (response.data && response.data.token) {
+        localStorage.setItem('authToken', response.data.token); // Store the token
+        storeUser(response.data); // Store user data if necessary
+        console.log("Token stored:", localStorage.getItem("authToken"));
+        setIsLoggedIn(true); // Update login state
+      } else {
         setErrors({
           ...errors,
-          identifier: "Invalid email password combination.",
+          general: "Invalid email/password combination.",
         });
-        throw new Error("Invalid email password combination.");
+        throw new Error("Invalid email/password combination.");
       }
-      storeUser(response.data);
-      navigate("/booking");
     } catch (error) {
       console.error(error);
+      setErrors({ 
+        ...errors, 
+        general: error.response?.data?.message || "Login failed. Please try again.",
+      });
+    } 
+  /* const [input, setInput] = useState({
+    email: "",
+    password: "",
+  });
+  const [errors, setErrors] = useState({
+    email: "",
+    password: "",
+    general: ""
+  });
+
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    if (isLoggedIn) {
+      navigate("/booking");
     }
+  }, [isLoggedIn, navigate]);
+
+  const validateEmail = (email) => {
+    if (!validator.isEmail(email)) {
+      setErrors({ ...errors, email: "Invalid email format." });
+      return false;
+    }
+    setErrors({ ...errors, email: "" });
+    return true;
+  };
+
+  const validatePassword = (password) => {
+    if (password.length < 8) {
+      setErrors({
+        ...errors,
+        password: "Password must be at least 8 characters long.",
+      });
+      return false;
+    }
+    setErrors({ ...errors, password: "" });
+    return true;
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    const isValid =
+      validateEmail(input.email) && validatePassword(input.password);
+    if (!isValid) {
+      return;
+    }
+
+    try {
+      const response = await axios.post(
+        "http://localhost:6500/api/v1/users/login",
+        input
+      );
+      console.log(response)
+
+      if (response.data && response.data.token) {
+  storeUser(response.data);
+  console.log(localStorage.getItem("token"));
+  setIsLoggedIn(true);
+  navigate("/booking");
+} else {
+  setErrors({
+    ...errors,
+    general: "Invalid email/password combination.",
+  });
+  throw new Error("Invalid email/password combination.");
+}
+    } catch (error) {
+      console.error(error);
+      setErrors({ ...errors, general: "Login failed. Please try again.",})
+    } */
   };
 
   return (
@@ -87,19 +177,19 @@ function Login() {
             <div className="flex w-[80%] m-auto justify-center">
               <label htmlFor="email" className="text-lg m-[0] font-normal" />
               <input
-                id="identifier"
+                id="email"
                 type="email"
                 className="w-4/5 rounded p-2 mt-4 placeholder-[#061f77] border border-gray-300 text-[#061f77] focus:outline-none"
                 placeholder="Email"
                 onChange={(e) => {
-                  setInput({ ...input, identifier: e.target.value });
+                  setInput({ ...input, email: e.target.value });
                   validateEmail(e.target.value);
                 }}
-                value={input.identifier}
+                value={input.email}
               />
             </div>
-            {errors.identifier && (
-              <p className="text-center text-red-500">{errors.identifier}</p>
+            {errors.email && (
+              <p className="text-center text-red-500">{errors.email}</p>
             )}
             <div className="relative flex w-[80%] m-auto justify-center">
               <label htmlFor="password" className="text-lg m-[0] font-normal" />

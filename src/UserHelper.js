@@ -2,6 +2,17 @@ import React, { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 
 export const storeUser = (data) => {
+  if (!data || !data.token) {
+    console.error("Missing user data in storeUser");
+    return;
+  }
+  
+  localStorage.setItem("token", data.token);
+  
+  localStorage.setItem("userData", JSON.stringify(data.userData || {}));
+};
+
+/* export const storeUser = (data) => {
   if (!data || !data.user || !data.user.username) {
     console.error("Missing user data in storeUser");
     return;
@@ -15,11 +26,12 @@ export const storeUser = (data) => {
       jwt: data.jwt,
     })
   );
-};
+}; */
 
 export const userData = () => {
   const stringifiedUser = localStorage.getItem("user") || "{}";
   return JSON.parse(stringifiedUser);
+  
 };
 
 export const Protector = ({ Component }) => {

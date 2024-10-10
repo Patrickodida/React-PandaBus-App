@@ -11,9 +11,7 @@ function Booking() {
   const user = userData();
   const navigate = useNavigate();
 
-  if (!user.jwt) {
-    navigate("/login");
-  }
+  
 
   const [input, setInput] = useState({
     from: "Kampala",
@@ -35,13 +33,17 @@ function Booking() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    if (!user.jwt) {
+    navigate("/login");
+  }
+
     const data = localStorage.getItem("ticketData");
     if (data) {
       setInput(JSON.parse(data));
     }
 
     fetchData();
-  }, []);
+  }, [user.jwt, navigate]);
 
   function fetchData() {
     fetch("http://localhost:6500/api/v1/busRoutes?populate=*")

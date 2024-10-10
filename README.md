@@ -1,8 +1,8 @@
-# KwataBus Ticketing System/Application
+# PandaBus Ticketing System/Application
 
 ## Overview
 
-KwataBus Ticketing System is a web application designed to streamline the process of booking bus tickets. It allows users to search for available buses, select their desired route, choose their seats, and make payments online.
+PandaBus Ticketing System is a web application designed to streamline the process of booking bus tickets. It allows users to search for available buses, select their desired route, choose their seats, and make payments online.
 
 ## Features
 

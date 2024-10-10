@@ -9,22 +9,19 @@ import Footer from "../components/Footer";
 function Signup() {
   const [input, setInput] = useState({
     email: "",
-    MobileNumber: "",
-    FirstName: "",
-    LastName: "",
-    username: "",
+    mobileNumber: "",
+    firstName: "",
+    lastName: "",
+    userName: "",
     password: "",
-    role: "Public",
-    confirmed: true,
-    blocked: false,
     confirmPassword: "",
   });
   const [error, setError] = useState({
     email: "",
-    MobileNumber: "",
-    FirstName: "",
-    LastName: "",
-    username: "",
+    mobileNumber: "",
+    firstName: "",
+    lastName: "",
+    userName: "",
     password: "",
     confirmPassword: "",
   });
@@ -39,44 +36,44 @@ function Signup() {
     return true;
   }
   // validate MobileNumber
-  function validateMobileNumber(MobileNumber) {
-    if (MobileNumber.length !== 10) {
-      setError({ ...error, MobileNumber: "Invalid Entry" });
+  function validateMobileNumber(mobileNumber) {
+    if (mobileNumber.length !== 10) {
+      setError({ ...error, mobileNumber: "Invalid Entry" });
       return false;
     }
-    setError({ ...error, MobileNumber: "" });
+    setError({ ...error, mobileNumber: "" });
     return true;
   }
   // validate FirstName
-  function validateFirstName(FirstName) {
-    let FirstNameRegexp = /^[a-zA-Z]+$/;
-    if (!FirstNameRegexp.test(FirstName)) {
-      setError({ ...error, FirstName: "Invalid First Name" });
+  function validateFirstName(firstName) {
+    let firstNameRegexp = /^[a-zA-Z]+$/;
+    if (!firstNameRegexp.test(firstName)) {
+      setError({ ...error, firstName: "Invalid First Name" });
       return false;
     }
-    setError({ ...error, FirstName: "" });
+    setError({ ...error, firstName: "" });
     return true;
   }
 
   // validate LastName
-  function validateLastName(LastName) {
-    let LastNameRegexp = /^[a-zA-Z]+$/;
-    if (!LastNameRegexp.test(LastName)) {
-      setError({ ...error, LastName: "Invalid Last Name" });
+  function validateLastName(lastName) {
+    let lastNameRegexp = /^[a-zA-Z]+$/;
+    if (!lastNameRegexp.test(lastName)) {
+      setError({ ...error, lastName: "Invalid Last Name" });
       return false;
     }
-    setError({ ...error, LastName: "" });
+    setError({ ...error, lastName: "" });
     return true;
   }
 
   // Validate userName
-  function validateUserName(username) {
+  function validateUserName(userName) {
     let userNameRegexp = /^[a-zA-Z]+$/;
-    if (!userNameRegexp.test(username)) {
-      setError({ ...error, username: "Invalid UserName" });
+    if (!userNameRegexp.test(userName)) {
+      setError({ ...error, userName: "Invalid UserName" });
       return false;
     }
-    setError({ ...error, username: "" });
+    setError({ ...error, userName: "" });
     return true;
   }
 
@@ -92,8 +89,8 @@ function Signup() {
 
   // Validate Confirm Password
   function validateConfirmPassword(confirmPassword) {
-    if (confirmPassword.length < 8) {
-      setError({ ...error, confirmPassword: "Invalid Password" });
+    if (confirmPassword !== input.password) {
+      setError({ ...error, confirmPassword: "Passwords do not match" });
       return false;
     }
     setError({ ...error, confirmPassword: "" });
@@ -104,18 +101,44 @@ function Signup() {
 
   const submitHandler = (e) => {
     e.preventDefault();
+
+    // Check if passwords match
+  if (input.password !== input.confirmPassword) {
+    setError({ ...error, confirmPassword: "Passwords do not match" });
+    return;
+  }
+
+    // Validate all inputs before submitting
+    const isValid =
+      validateEmail(input.email) &&
+      validateMobileNumber(input.mobileNumber) &&
+      validateFirstName(input.firstName) &&
+      validateLastName(input.lastName) &&
+      validateUserName(input.userName) &&
+      validatePassword(input.password) &&
+      validateConfirmPassword(input.confirmPassword);
+      if (isValid) {
+        const userData = {
+      email: input.email,
+      mobileNumber: input.mobileNumber,
+      firstName: input.firstName,
+      lastName: input.lastName,
+      userName: input.userName,
+      password: input.password,
+    };
     axios
       .post(
-        "http://localhost:1337/api/auth/local/register",
-        input
+        "http://localhost:6500/api/v1/users/register", userData
       )
       .then((response) => {
+        console.log(response);
         navigate("/login");
       })
       .catch((error) => {
-        setError("Not Signed Up, Try again!");
+        setError({ ...error, submit: "Failed to sign up, please try again!" });
         console.log(error);
       });
+    }
   };
   return (
     <div>
@@ -150,55 +173,55 @@ function Signup() {
           )}
 
           <div className="flex w-[80%] m-auto justify-center ">
-            <label for="MobileNumber" className="text-lg m-[0] font-normal" />
+            <label for="mobileNumber" className="text-lg m-[0] font-normal" />
             <input
-              id="MobileNumber"
+              id="mobileNumber"
               type="text"
               className="w-4/5 rounded p-2 mt-4 placeholder-[#061f77] border border-gray-300 text-[#061f77] focus:outline-none"
               placeholder="Mobile Number"
               onChange={(e) => {
-                setInput({ ...input, MobileNumber: e.target.value });
+                setInput({ ...input, mobileNumber: e.target.value });
                 validateMobileNumber(e.target.value);
               }}
-              value={input.MobileNumber}
+              value={input.mobileNumber}
             />
           </div>
-          {error.MobileNumber && (
-            <p className="text-center text-red-500">{error.MobileNumber}</p>
+          {error.mobileNumber && (
+            <p className="text-center text-red-500">{error.mobileNumber}</p>
           )}
           <div className="flex w-[80%] m-auto justify-center">
-            <label for="FirstName" className="text-lg m-[0]" />
+            <label for="firstName" className="text-lg m-[0]" />
             <input
-              id="FirstName"
+              id="firstName"
               type="text"
               className="w-4/5 rounded p-2 mt-4 placeholder-[#061f77] border border-gray-300 text-[#061f77] focus:outline-none"
               placeholder="First Name"
               onChange={(e) => {
-                setInput({ ...input, FirstName: e.target.value });
+                setInput({ ...input, firstName: e.target.value });
                 validateFirstName(e.target.value);
               }}
-              value={input.FirstName}
+              value={input.firstName}
             />
           </div>
-          {error.FirstName && (
-            <p className="text-center text-red-500">{error.FirstName}</p>
+          {error.firstName && (
+            <p className="text-center text-red-500">{error.firstName}</p>
           )}
           <div className="flex w-[80%] m-auto justify-center">
-            <label for="LastName" className="text-lg m-[0]" />
+            <label for="lastName" className="text-lg m-[0]" />
             <input
-              id="LastName"
+              id="lastName"
               type="text"
               className="w-4/5 rounded p-2 mt-4 placeholder-[#061f77] border border-gray-300 text-[#061f77] focus:outline-none"
-              placeholder="Last Name"
+              placeholder="lastName"
               onChange={(e) => {
-                setInput({ ...input, LastName: e.target.value });
-                validateLastName(e.target.value);
+                setInput({ ...input, lastName: e.target.value });
+                validateUserName(e.target.value);
               }}
-              value={input.LastName}
+              value={input.lastName}
             />
           </div>
-          {error.LastName && (
-            <p className="text-center text-red-500">{error.LastName}</p>
+          {error.lastName && (
+            <p className="text-center text-red-500">{error.lastName}</p>
           )}
           <div className="flex w-[80%] m-auto justify-center">
             <label for="userName" className="text-lg m-[0]" />
@@ -206,16 +229,16 @@ function Signup() {
               id="userName"
               type="text"
               className="w-4/5 rounded p-2 mt-4 placeholder-[#061f77] border border-gray-300 text-[#061f77] focus:outline-none"
-              placeholder="Username"
+              placeholder="userName"
               onChange={(e) => {
-                setInput({ ...input, username: e.target.value });
+                setInput({ ...input, userName: e.target.value });
                 validateUserName(e.target.value);
               }}
-              value={input.username}
+              value={input.userName}
             />
           </div>
-          {error.username && (
-            <p className="text-center text-red-500">{error.username}</p>
+          {error.userName && (
+            <p className="text-center text-red-500">{error.userName}</p>
           )}
           <div className="relative flex w-[80%] m-auto justify-center">
             <label for="password" className="text-lg m-[0] font-normal" />
@@ -260,6 +283,7 @@ function Signup() {
           {error.confirmPassword && (
             <p className="text-center text-red-500">{error.confirmPassword}</p>
           )}
+          {error.submit && <p className="text-center text-red-500">{error.submit}</p>}
           <div className="mt-8 flex justify-center"></div>
           <div className="flex justify-center m-auto w-[80%]">
             <button

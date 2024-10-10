@@ -51,7 +51,7 @@ function Login() {
 
     try {
       const response = await axios.post(
-        "http://localhost:1337/api/auth/local?populate=*",
+        "http://localhost:6500/api/v1/users/login",
         input
       );
 

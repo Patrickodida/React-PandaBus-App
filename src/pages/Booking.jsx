@@ -44,7 +44,7 @@ function Booking() {
   }, []);
 
   function fetchData() {
-    fetch("http://localhost:1337/api/bus-routes?populate=*")
+    fetch("http://localhost:6500/api/v1/busRoutes?populate=*")
       .then((response) => response.json())
       .then((dataObject) => {
         let routeData = dataObject.data;

@@ -25,7 +25,7 @@ function OrdBusSeat() {
 
   useEffect(() => {
     axios
-      .get(`http://localhost:1337/api/bus-routes/${id}?populate=*`)
+      .get(`http://localhost:6500/api/v1/busRoutes/${id}?populate=*`)
       .then((response) => {
         setBusService(response.data.data.attributes);
         setLoading(false);
@@ -39,7 +39,7 @@ function OrdBusSeat() {
   useEffect(() => {
     if (journeyDate) {
       axios
-        .get(`http://localhost:1337/api/bus-routes/${id}?populate=*`)
+        .get(`http://localhost:6500/api/v1/busRoutes/${id}?populate=*`)
         .then((response) => {
           const seats = response.data.data.attributes.seats.data;
           const bookedSeats = seats
@@ -106,7 +106,7 @@ function OrdBusSeat() {
     };
 
     axios
-      .put(`http://localhost:1337/api/bus-routes/${id}`,updateData)
+      .put(`http://localhost:6500/api/v1/busRoutes/${id}`,updateData)
       .then((response) => {
         navigate("/PaymentsPage", { state: journeyDetails });
       })

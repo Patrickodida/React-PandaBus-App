@@ -2,48 +2,35 @@ import React, { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 
 export const storeUser = (data) => {
-  if (!data || !data.token) {
-    console.error("Missing user data in storeUser");
-    return;
-  }
-  
-  localStorage.setItem("token", data.token);
-  
-  localStorage.setItem("userData", JSON.stringify(data.userData || {}));
-};
-
-/* export const storeUser = (data) => {
-  if (!data || !data.user || !data.user.username) {
+  if (!data || !data.user || !data.user.userName) {
     console.error("Missing user data in storeUser");
     return;
   }
   localStorage.setItem(
     "user",
     JSON.stringify({
-      username: data.user.username,
-      phone: data.user.MobileNumber,
+      userName: data.user.userName,
+      mobileNumber: data.user.mobileNumber,
       email: data.user.email,
-      jwt: data.jwt,
+      token: data.token,
     })
   );
-}; */
+};
 
 export const userData = () => {
   const stringifiedUser = localStorage.getItem("user") || "{}";
   return JSON.parse(stringifiedUser);
-  
 };
 
 export const Protector = ({ Component }) => {
   const navigate = useNavigate();
-
-  const { jwt } = userData();
+  const { token } = userData();
 
   useEffect(() => {
-    if (!jwt) {
+    if (!token) {
       navigate("/login");
     }
-  }, [navigate, jwt]);
+  }, [navigate, token]);
 
   return Component;
 };

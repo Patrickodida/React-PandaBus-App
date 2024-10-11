@@ -161,6 +161,7 @@ function Signup() {
               type="email"
               className="w-4/5 rounded p-2 mt-4 placeholder-[#061f77] border border-gray-300 text-[#061f77] focus:outline-none"
               placeholder="Email"
+              autoComplete="email"
               onChange={(e) => {
                 setInput({ ...input, email: e.target.value });
                 validateEmail(e.target.value);
@@ -179,6 +180,7 @@ function Signup() {
               type="text"
               className="w-4/5 rounded p-2 mt-4 placeholder-[#061f77] border border-gray-300 text-[#061f77] focus:outline-none"
               placeholder="Mobile Number"
+              autoComplete="tel"
               onChange={(e) => {
                 setInput({ ...input, mobileNumber: e.target.value });
                 validateMobileNumber(e.target.value);
@@ -196,6 +198,7 @@ function Signup() {
               type="text"
               className="w-4/5 rounded p-2 mt-4 placeholder-[#061f77] border border-gray-300 text-[#061f77] focus:outline-none"
               placeholder="First Name"
+              autoComplete="given-name"
               onChange={(e) => {
                 setInput({ ...input, firstName: e.target.value });
                 validateFirstName(e.target.value);
@@ -213,6 +216,7 @@ function Signup() {
               type="text"
               className="w-4/5 rounded p-2 mt-4 placeholder-[#061f77] border border-gray-300 text-[#061f77] focus:outline-none"
               placeholder="lastName"
+              autoComplete="family-name"
               onChange={(e) => {
                 setInput({ ...input, lastName: e.target.value });
                 validateUserName(e.target.value);
@@ -230,6 +234,7 @@ function Signup() {
               type="text"
               className="w-4/5 rounded p-2 mt-4 placeholder-[#061f77] border border-gray-300 text-[#061f77] focus:outline-none"
               placeholder="userName"
+              autoComplete="username"
               onChange={(e) => {
                 setInput({ ...input, userName: e.target.value });
                 validateUserName(e.target.value);
@@ -247,6 +252,7 @@ function Signup() {
               type="password"
               className="w-4/5 rounded p-2 mt-4 placeholder-[#061f77] border border-gray-300 text-[#061f77] focus:outline-none"
               placeholder="Create password"
+              autoComplete="current-password"
               onChange={(e) => {
                 setInput({ ...input, password: e.target.value });
                 validatePassword(e.target.value);
@@ -270,6 +276,7 @@ function Signup() {
               type="password"
               className="w-4/5 rounded p-2 mt-4 placeholder-[#061f77] border border-gray-300 text-[#061f77] focus:outline-none"
               placeholder="Confirm password"
+              autoComplete="confirm-password"
               onChange={(e) => {
                 setInput({ ...input, confirmPassword: e.target.value });
                 validateConfirmPassword(e.target.value);

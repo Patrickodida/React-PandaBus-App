@@ -23,8 +23,8 @@ function Contact() {
       setError((prevError) => ({ ...prevError, name: "Please enter your name" }));
       return false;
     }
-    const nameFormat = /^[a-zA-Z\s]*$/;
-    if (!nameFormat.test(name)) {
+    const nameformat = /^[a-zA-Z\s]*$/;
+    if (!nameformat.test(name)) {
       setError((prevError) => ({ ...prevError, name: "Please enter a valid name" }));
       return false;
     }

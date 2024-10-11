@@ -12,7 +12,7 @@ function ExecBusSeat() {
         <section className="text-[#061f77] font-bold text-[1.25rem] md:w-full md:m-auto mb-[4em]">
           <form className="border border-gray-300 shadow-md p-16">
             <div className="relative flex flex-col flex-start mb-4">
-              <label htmlFor="date" className="m-[0]">
+              <label htmlfor="date" className="m-[0]">
                 Journey Date
               </label>
               <input
@@ -25,7 +25,7 @@ function ExecBusSeat() {
               </span>
             </div>
             <div className="relative flex flex-col flex-start mb-4">
-              <label htmlFor="date">From</label>
+              <label htmlfor="date">From</label>
               <input
                 type="text"
                 id="date"
@@ -37,7 +37,7 @@ function ExecBusSeat() {
             </div>
 
             <div className="relative flex flex-col flex-start mb-4">
-              <label htmlFor="date">To</label>
+              <label htmlfor="date">To</label>
               <input
                 type="text"
                 id="date"
@@ -49,7 +49,7 @@ function ExecBusSeat() {
             </div>
 
             <div className="relative flex flex-col flex-start mb-4">
-              <label htmlFor="date">Bus Category</label>
+              <label htmlfor="date">Bus Category</label>
               <input
                 type="text"
                 id="date"

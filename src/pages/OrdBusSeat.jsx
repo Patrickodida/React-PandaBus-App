@@ -154,7 +154,7 @@ function OrdBusSeat() {
             onSubmit={handleSubmit}
           >
             <div className="relative flex flex-col flex-start mb-4">
-              <label htmlFor="date" className="m-[0]">
+              <label htmlfor="date" className="m-[0]">
                 Journey Date
               </label>
               <input
@@ -166,7 +166,7 @@ function OrdBusSeat() {
               />
             </div>
             <div className="relative flex flex-col flex-start mb-4">
-              <label htmlFor="from">From</label>
+              <label htmlfor="from">From</label>
               <input
                 type="text"
                 id="from"
@@ -176,7 +176,7 @@ function OrdBusSeat() {
               />
             </div>
             <div className="relative flex flex-col flex-start mb-4">
-              <label htmlFor="to">To</label>
+              <label htmlfor="to">To</label>
               <input
                 type="text"
                 id="to"
@@ -186,7 +186,7 @@ function OrdBusSeat() {
               />
             </div>
             <div className="relative flex flex-col flex-start mb-4">
-              <label htmlFor="busCategory">Bus Service</label>
+              <label htmlfor="busCategory">Bus Service</label>
               <input
                 type="text"
                 id="busCategory"

@@ -57,7 +57,8 @@ function Login() {
       console.log(response.data);
 
       if (response.data.token) {
-        localStorage.setItem('token', response.data.token);
+        //localStorage.setItem('token', response.data.token);
+        storeUser(response.data);
         navigate("/booking");
         console.log("Login successful", response.data);
       } else {

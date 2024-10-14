@@ -33,7 +33,7 @@ function Booking() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    if (!user.token) { // Changed to check for 'token' instead of 'jwt'
+    if (!user.token) {
       navigate("/login");
       return;
     }
@@ -44,7 +44,7 @@ function Booking() {
     }
 
     fetchData();
-  }, [user.token, navigate]); // Changed from user.jwt to user.token
+  }, [user.token, navigate]);
 
   function fetchData() {
     fetch("http://localhost:6500/api/v1/busRoutes?populate=*")

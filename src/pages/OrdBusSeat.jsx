@@ -19,13 +19,13 @@ function OrdBusSeat() {
   const [userId, setUserId] = useState("");
 
   const user = userData();
-  if (!user.jwt) {
+  if (!user.token) {
     navigate("/login");
   }
 
   useEffect(() => {
     axios
-      .get(`http://localhost:6500/api/v1/busRoutes/${id}?populate=*`)
+      .get(`http://localhost:6500/api/v1/busRoutes/${id}`)
       .then((response) => {
         setBusService(response.data.data.attributes);
         setLoading(false);
@@ -39,7 +39,7 @@ function OrdBusSeat() {
   useEffect(() => {
     if (journeyDate) {
       axios
-        .get(`http://localhost:6500/api/v1/busRoutes/${id}?populate=*`)
+        .get(`http://localhost:6500/api/v1/busRoutes/${id}`)
         .then((response) => {
           const seats = response.data.data.attributes.seats.data;
           const bookedSeats = seats

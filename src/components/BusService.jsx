@@ -1,17 +1,17 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
 
-function BusService(props) {
+function BusService({ id, busCompany, departureTown, arrivalTown, departureTime, fare }) {
   const navigate = useNavigate();
 
   const handleSelectSeat = () => {
-    navigate(`/select-seat/${ props.id }`, {
+    navigate(`/select-seat/$${id}`, {
       state: {
-        busCompany: props.busCompany,
-        departureTown: props.departureTown,
-        arrivalTown: props.arrivalTown,
-        departureTime: props.departureTime,
-        fare: props.fare,
+        busCompany,
+        departureTown,
+        arrivalTown,
+        departureTime,
+        fare,
       },
     });
   };
@@ -19,16 +19,16 @@ function BusService(props) {
     <div className="m-auto w-full text-[#061f77] mb-10">
       <section className="flex md:justify-center flex-col md:flex-row bg-slate-100 p-4 rounded-lg text-center">
         <div className="text-center md:text-left">
-          <h1 className="mb-4 font-bold">{props.busCompany}</h1>
+          <h1 className="mb-4 font-bold">{busCompany}</h1>
           <p className="mb-4">
-            <span className="font-bold">From</span> {props.departureTown}{" "}
-            <span className="font-bold">To</span> {props.arrivalTown}
+            <span className="font-bold">From</span> {departureTown}{" "}
+            <span className="font-bold">To</span> {arrivalTown}
           </p>
         </div>
 
         <div className="md:flex md:justify-center flex-col md:flex-row md:items-end">
-          <p className="md:ml-8 mb-4">Departure time: {props.departureTime}</p>
-          <p className="md:ml-8 mb-4">Cost: {props.fare}</p>
+          <p className="md:ml-8 mb-4">Departure time: {departureTime}</p>
+          <p className="md:ml-8 mb-4">Cost: {fare}</p>
           <div className="button flex justify-center w-full md:w-[50%]">
           <button
             onClick={handleSelectSeat}

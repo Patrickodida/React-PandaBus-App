@@ -2,17 +2,17 @@ import React, { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 
 export const storeUser = (data) => {
-  if (!data || !data.user || !data.user.userName) {
+  if (!data){
     console.error("Missing user data in storeUser");
     return;
   }
   localStorage.setItem(
     "user",
     JSON.stringify({
-      userName: data.user.userName,
-      mobileNumber: data.user.mobileNumber,
-      email: data.user.email,
-      token: data.token,
+      //userName: data.user.userName,
+      //mobileNumber: data.user.mobileNumber,
+      //email: data.user.email,
+      token: data,
     })
   );
 };

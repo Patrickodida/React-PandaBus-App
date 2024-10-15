@@ -46,20 +46,28 @@ function Booking() {
     fetchData();
   }, [user.token, navigate]);
 
-  function fetchData() {
-    fetch("http://localhost:6500/api/v1/busRoutes?populate=*")
-      .then((response) => response.json())
-      .then((dataObject) => {
-        let routeData = dataObject.data;
-        setRoute(routeData);
-        setFilteredRoute(routeData);
-        setLoading(false);
-      })
-      .catch((error) => {
-        console.error("Error fetching data:", error);
-        setLoading(false);
-      });
+  const fetchData = async () => {
+  try {
+    let busRoutesResponse = await fetch("http://localhost:6500/api/v1/busRoutes");
+    let busServicesResponse = await fetch("http://localhost:6500/api/v1/busServices");
+
+    let busRoutesData = await busRoutesResponse.json();
+    let busServicesData = await busServicesResponse.json();
+
+    // Combine the bus routes with bus services by busId
+    const combinedRoutes = busRoutesData.map(route => {
+      const busService = busServicesData.find(service => service.busId === route.routeId);
+      return { ...route, busCompany: busService ? busService.name : "Unknown Bus Company" };
+    });
+
+    setRoute(combinedRoutes);
+    setFilteredRoute(combinedRoutes);
+    setLoading(false);
+  } catch (error) {
+    console.error("Error fetching data:", error);
+    setLoading(false);
   }
+};
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -67,7 +75,7 @@ function Booking() {
 
     if (input.from) {
       filtered = filtered.filter((item) =>
-        item.attributes.DepartureTown.toLowerCase().includes(
+        item.departureTown.toLowerCase().includes(
           input.from.toLowerCase()
         )
       );
@@ -75,7 +83,7 @@ function Booking() {
 
     if (input.to) {
       filtered = filtered.filter((item) =>
-        item.attributes.ArrivalTown.toLowerCase().includes(
+        item.arrivalTown.toLowerCase().includes(
           input.to.toLowerCase()
         )
       );
@@ -133,7 +141,16 @@ function Booking() {
                 <p>No buses available for this route.</p>
               ) : (
                 filteredRoute.map((bus) => (
-                  <BusService key={bus.id} bus={bus} />
+                  <BusService
+                  key={bus.routeId}
+                  busCompany={bus.busCompany}
+                  departureTown={bus.departureTown}
+                  arrivalTown={bus.arrivalTown}
+                  departureTime={new Date(bus.departureTime).toLocaleString()}
+                  fare={bus.fare}
+                  id={bus.routeId}
+                />
+                  
                 ))
               )}
             </div>

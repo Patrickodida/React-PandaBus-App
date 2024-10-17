@@ -5,7 +5,7 @@ function BusService({ id, busCompany, departureTown, arrivalTown, departureTime,
   const navigate = useNavigate();
 
   const handleSelectSeat = () => {
-    navigate(`/select-seat/$${id}`, {
+    navigate(`/select-seat/${id}`, {
       state: {
         busCompany,
         departureTown,

@@ -7,9 +7,10 @@ import axios from "axios";
 import { userData } from "../UserHelper";
 
 function OrdBusSeat() {
-  const { id } = useParams();
+  const { id } = useParams(); // Get the bus route id
   const navigate = useNavigate();
-  const [busService, setBusService] = useState(null);
+  const [busRoute, setBusRoute] = useState(null); // Store bus route data
+  const [busService, setBusService] = useState(null); // Store bus service data
   const [loading, setLoading] = useState(true);
   const [selectedSeats, setSelectedSeats] = useState([]);
   const [bookedSeats, setBookedSeats] = useState([]);
@@ -17,54 +18,73 @@ function OrdBusSeat() {
   const [journeyDate, setJourneyDate] = useState("");
   const [error, setError] = useState("");
   const [userId, setUserId] = useState("");
-
+  
   const user = userData();
   if (!user.token) {
     navigate("/login");
   }
 
+  // Fetch bus route details
   useEffect(() => {
-    axios
-      .get(`http://localhost:6500/api/v1/busRoutes/${id}`)
-      .then((response) => {
-        setBusService(response.data.data.attributes);
+    const fetchBusData = async () => {
+      try {
+        const routeResponse = await axios.get(
+          `http://localhost:6500/api/v1/busRoutes/${id}`
+        );
+        setBusRoute(routeResponse.data); // Set bus route data
+        const serviceResponse = await axios.get(
+          `http://localhost:6500/api/v1/busServices`
+        );
+        const matchingService = serviceResponse.data.find(
+          (service) => service.busId === routeResponse.data.busId
+        );
+        setBusService(matchingService); // Set the matching bus service data
         setLoading(false);
-      })
-      .catch((error) => {
-        console.error("Error fetching bus service data:", error);
+      } catch (error) {
+        console.error("Error fetching bus data:", error);
         setLoading(false);
-      });
+      }
+    };
+
+    fetchBusData();
   }, [id]);
 
+  // Fetch seat availability once the journey date is set
   useEffect(() => {
-    if (journeyDate) {
-      axios
-        .get(`http://localhost:6500/api/v1/busRoutes/${id}`)
-        .then((response) => {
-          const seats = response.data.data.attributes.seats.data;
-          const bookedSeats = seats
-            .filter((seat) => seat.attributes.booked)
-            .map((seat) => seat.attributes.seatNumber);
-          const selectedByOthersSeats = seats
-            .filter((seat) => seat.attributes.selectedByOthers)
-            .map((seat) => seat.attributes.seatNumber);
-          setBookedSeats(bookedSeats);
-          setSelectedByOthersSeats(selectedByOthersSeats);
-        })
-        .catch((error) => {
-          console.error("Error fetching seat availability data:", error);
-        });
+  const fetchSeatAvailability = async () => {
+    try {
+      const response = await axios.get(
+        `http://localhost:6500/api/v1/busRoutes/${id}`
+      );
+      const seats = response.data.seats;
+      const bookedSeats = seats
+        .filter((seat) => seat.booked)
+        .map((seat) => seat.seatNumber);
+      const selectedByOthersSeats = seats
+        .filter((seat) => seat.selectedByOthers)
+        .map((seat) => seat.seatNumber);
+
+      setBookedSeats(bookedSeats);
+      setSelectedByOthersSeats(selectedByOthersSeats);
+    } catch (error) {
+      console.error("Error fetching seat availability:", error);
     }
-  }, [id, journeyDate]);
+  };
+
+  if (journeyDate) {
+    fetchSeatAvailability();
+  }
+}, [id, journeyDate]);
 
   if (loading) {
     return <div>Loading...</div>;
   }
 
-  if (!busService) {
-    return <div>Error loading bus service data</div>;
+  if (!busRoute || !busService) {
+    return <div>Error loading bus data</div>;
   }
 
+  // Handle seat selection
   const handleSeatClick = (seatNumber) => {
     if (
       !bookedSeats.includes(seatNumber) &&
@@ -79,21 +99,22 @@ function OrdBusSeat() {
       );
     }
   };
+
   const handleSubmit = (event) => {
     event.preventDefault();
     const journeyDetails = {
       journeyDate,
-      from: busService.DepartureTown,
-      to: busService.ArrivalTown,
-      busCategory: busService.bus_services.data[0].attributes.Name,
+      from: busRoute.departureTown,
+      to: busRoute.arrivalTown,
+      busCategory: busService.name,
       selectedSeats,
       user,
-      price: busService.Fare,
+      price: busRoute.fare,
     };
 
-    const selectedSeatIds = busService.seats.data
-      .filter((seat) => selectedSeats.includes(seat.attributes.seatNumber))
-      .map((seat) => seat.id);
+    const selectedSeatIds = busRoute.seats
+      .filter((seat) => selectedSeats.includes(seat.seatNumber))
+      .map((seat) => seat.seatId);
 
     const updateData = {
       data: {
@@ -106,7 +127,7 @@ function OrdBusSeat() {
     };
 
     axios
-      .put(`http://localhost:6500/api/v1/busRoutes/${id}`,updateData)
+      .put(`http://localhost:6500/api/v1/busRoutes/${id}`, updateData)
       .then((response) => {
         navigate("/PaymentsPage", { state: journeyDetails });
       })
@@ -125,17 +146,16 @@ function OrdBusSeat() {
           : bookedSeats.includes(seatNumber)
           ? "bg-gray-500"
           : selectedByOthersSeats.includes(seatNumber)
-          ? "bg-[#ff4500]" // Example color for seats selected by others
+          ? "bg-[#ff4500]"
           : seatNumber === "S" || seatNumber === "Driver"
           ? "bg-[#e3bf00]"
           : ""
-      } ${
-        !bookedSeats.includes(seatNumber) &&
+      } ${!bookedSeats.includes(seatNumber) &&
         !selectedByOthersSeats.includes(seatNumber) &&
         seatNumber !== "S" &&
         seatNumber !== "Driver"
-          ? "cursor-pointer"
-          : ""
+        ? "cursor-pointer"
+        : ""
       }`}
       onClick={() => handleSeatClick(seatNumber)}
     >
@@ -154,7 +174,7 @@ function OrdBusSeat() {
             onSubmit={handleSubmit}
           >
             <div className="relative flex flex-col flex-start mb-4">
-              <label htmlfor="date" className="m-[0]">
+              <label htmlFor="date" className="m-[0]">
                 Journey Date
               </label>
               <input
@@ -166,31 +186,31 @@ function OrdBusSeat() {
               />
             </div>
             <div className="relative flex flex-col flex-start mb-4">
-              <label htmlfor="from">From</label>
+              <label htmlFor="from">From</label>
               <input
                 type="text"
                 id="from"
-                value={busService.DepartureTown}
+                value={busRoute.departureTown}
                 readOnly
                 className="rounded p-2 mt-4 placeholder-[#061f77] border border-gray-300 text-[#061f77] focus:outline-none"
               />
             </div>
             <div className="relative flex flex-col flex-start mb-4">
-              <label htmlfor="to">To</label>
+              <label htmlFor="to">To</label>
               <input
                 type="text"
                 id="to"
-                value={busService.ArrivalTown}
+                value={busRoute.arrivalTown}
                 readOnly
                 className="rounded p-2 mt-4 placeholder-[#061f77] border border-gray-300 text-[#061f77] focus:outline-none"
               />
             </div>
             <div className="relative flex flex-col flex-start mb-4">
-              <label htmlfor="busCategory">Bus Service</label>
+              <label htmlFor="busCategory">Bus Service</label>
               <input
                 type="text"
                 id="busCategory"
-                value={busService.bus_services.data[0].attributes.Name}
+                value={busService.name}
                 readOnly
                 className="rounded p-2 mt-4 placeholder-[#061f77] border border-gray-300 text-[#061f77] focus:outline-none"
               />
@@ -209,109 +229,19 @@ function OrdBusSeat() {
           <h1 className="font-bold text-[1.25rem] text-center mb-4 text-[#061f77]">
             Click on Seat to select or deselect
           </h1>
-          <div className="seat-section border border-gray-300 shadow-md p-6">
-            <div className="flex justify-center gap-10 text-[#061f77] text-[1.25rem]">
-              <div className="left-row">
-                {[
-                  [1, 2],
-                  [3, 4],
-                  [8, 9],
-                  ["Door", ""],
-                  ["S", "S"],
-                  [19, 20],
-                  [24, 25],
-                  [29, 30],
-                  [34, 35],
-                  [39, 40],
-                  [44, 45],
-                  [49, 50],
-                  [54, 55],
-                  [59, 60],
-                ].map((row, rowIndex) => {
-                  if (row[0] === "Door" && row[1] === "") {
-                    return (
-                      <div
-                        key={rowIndex}
-                        className="row flex gap-5 mb-4 font-bold"
-                      >
-                        <div className="door flex flex-col justify-center">
-                          <span>Door</span>
-                        </div>
-                      </div>
-                    );
-                  } else {
-                    return (
-                      <div key={rowIndex} className="row flex gap-5 mb-4">
-                        {row.map((seat, index) => renderSeat(seat, index))}
-                      </div>
-                    );
-                  }
-                })}
-              </div>
-              <div className="right-row">
-                {[
-                  ["", "Driver"],
-                  [5, 6, 7],
-                  [10, 11, 12],
-                  [13, 14, 15],
-                  [16, 17, 18],
-                  [21, 22, 23],
-                  [26, 27, 28],
-                  [31, 32, 33],
-                  [36, 37, 38],
-                  [41, 42, 43],
-                  [46, 47, 48],
-                  [51, 52, 53],
-                  [56, 57, 58],
-                  [61, 62, 63]
-                ].map((row, rowIndex) => {
-                  if (row[0] === "" && row[1] === "Driver") {
-                    return (
-                      <div
-                        key={rowIndex}
-                        className="row flex gap-5 mb-4 font-bold"
-                      >
-                        <div className="empty flex flex-col justify-center">
-                          <span></span>
-                        </div>
-                        <div className="driver flex flex-col justify-center">
-                          <span>Driver</span>
-                        </div>
-                      </div>
-                    );
-                  } else {
-                    return (
-                      <div key={rowIndex} className="row flex gap-5 mb-4">
-                        {row.map((seat, index) => renderSeat(seat, index))}
-                      </div>
-                    );
-                  }
-                })}
-              </div>
-            </div>
+          <div className="seat-grid flex flex-wrap justify-center items-center gap-[0.25em]">
+            {busRoute.seats.map((seat, index) =>
+              renderSeat(seat.seatNumber, index)
+            )}
           </div>
-          <div className="mt-6">
-            <div className="sort-seats flex gap-5 mb-2">
-              <div className="seat border-2 border-[#061f77] py-[0.125em] px-[0.325em] w-[2.25em] text-center"></div>
-              <div>Available seats</div>
-            </div>
-            <div className="sort-seats flex gap-5 mb-2">
-              <div className="seat border-2 border-[#061f77] py-[0.125em] px-[0.325em] w-[2.25em] text-center bg-[#069306]"></div>
-              <div>Selected by You</div>
-            </div>
-            <div className="sort-seats flex gap-5 mb-2">
-              <div className="seat border-2 border-[#061f77] py-[0.125em] px-[0.325em] w-[2.25em] text-center bg-gray-500"></div>
-              <div>Booked by Others</div>
-            </div>
-            <div className="sort-seats flex gap-5 mb-2">
-              <div className="seat border-2 border-[#061f77] py-[0.125em] px-[0.325em] w-[2.25em] text-center bg-[#ff4500]"></div>
-              <div>Selected by Others</div>
-            </div>
-            <div className="sort-seats flex gap-5 mb-2">
-              <div className="seat border-2 bg-[#e3bf00] border-[#061f77] py-[0.125em] px-[0.325em] w-[2.25em] text-center">
-                S
-              </div>
-              <div>Staff seat</div>
+          <div className="seating-instructions text-center mt-4 text-sm text-gray-500">
+            <div className="seat-info">
+              <span className="seat bg-[#069306] text-xs">Selected Seat</span>
+              <span className="seat bg-gray-500 text-xs">Booked Seat</span>
+              <span className="seat bg-[#ff4500] text-xs">
+                Selected by Others
+              </span>
+              <span className="seat bg-[#e3bf00] text-xs">Special Seat</span>
             </div>
           </div>
         </section>

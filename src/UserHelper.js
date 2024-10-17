@@ -9,9 +9,6 @@ export const storeUser = (data) => {
   localStorage.setItem(
     "user",
     JSON.stringify({
-      //userName: data.user.userName,
-      //mobileNumber: data.user.mobileNumber,
-      //email: data.user.email,
       token: data,
     })
   );

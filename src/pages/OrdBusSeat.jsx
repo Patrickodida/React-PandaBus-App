@@ -56,7 +56,8 @@ function OrdBusSeat() {
       const response = await axios.get(
         `http://localhost:6500/api/v1/busRoutes/${id}`
       );
-      const seats = response.data.seats;
+      if(response.status === 200){
+        const seats = response.data.seats;
       const bookedSeats = seats
         .filter((seat) => seat.booked)
         .map((seat) => seat.seatNumber);
@@ -66,8 +67,13 @@ function OrdBusSeat() {
 
       setBookedSeats(bookedSeats);
       setSelectedByOthersSeats(selectedByOthersSeats);
+      } else {
+        throw new Error(`Unexpected response code: ${response.status}`);
+      }
+      
     } catch (error) {
       console.error("Error fetching seat availability:", error);
+      alert("Error loading bus data. Please try again.");
     }
   };
 

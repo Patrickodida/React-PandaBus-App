@@ -10,6 +10,7 @@ export const storeUser = (data) => {
     "user",
     JSON.stringify({
       token: data,
+      //userName: data.userName,
     })
   );
 };

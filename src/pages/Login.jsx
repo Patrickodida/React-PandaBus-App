@@ -57,9 +57,10 @@ function Login() {
       console.log(response.data);
 
       if (response.data.token) {
+        //storeUser(response.data)
         storeUser(response.data.token);
         return navigate("/booking");
-        console.log("Login successful", response.data);
+        //console.log("Login successful", response.data);
       } else {
         setErrors({ ...errors, email: "Invalid email or password combination." });
       }

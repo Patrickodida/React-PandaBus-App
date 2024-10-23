@@ -4,15 +4,14 @@ import { userData, storeUser } from "../UserHelper";
 
 function Navbar() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const [username, setUsername] = useState("");
+  const [userName, setuserName] = useState("");
   const [menuOpen, setMenuOpen] = useState(false);
   const navigate = useNavigate();
 
   useEffect(() => {
     const user = userData();
-    if (user && user.username) {
-      setIsLoggedIn(true);
-      setUsername(user.username);
+    if (user && user.userName) {
+      setIsLoggedIn(true);setuserName(user.userName);
     }
     window.scrollTo(0, 0);
   }, []);
@@ -21,7 +20,7 @@ function Navbar() {
     localStorage.removeItem("user");
     storeUser({});
     setIsLoggedIn(false);
-    setUsername("");
+    setuserName("");
     navigate("/login");
   };
 
@@ -72,7 +71,7 @@ function Navbar() {
                     <span>
                       <i className="bx bx-user md:pr-2 font-bold text-[1.5rem]"></i>
                     </span>
-                    <span className="nav-links">{username}</span>
+                    <span className="nav-links">{userName}</span>
                   </li>
                   <li className="hover:text-[white] md:hover:text-[#e3bf00]">
                     <Link

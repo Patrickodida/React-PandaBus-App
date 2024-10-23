@@ -38,6 +38,10 @@ function OrdBusSeat() {
         const matchingService = serviceResponse.data.find(
           (service) => service.busId === routeResponse.data.busId
         );
+        console.log(routeResponse.data)
+        console.log(serviceResponse.data[0])
+        //console.log('serviceData'+ serviceResponse.data)
+        //console.log(routeResponse)
         setBusService(matchingService); // Set the matching bus service data
         setLoading(false);
       } catch (error) {

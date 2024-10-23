@@ -11,7 +11,7 @@ function Booking() {
   const user = userData();
   const navigate = useNavigate();
 
-  console.log("User Data: ", user);
+  //console.log("User Data: ", user);
 
   const [input, setInput] = useState({
     from: "Kampala",
@@ -40,11 +40,15 @@ function Booking() {
 
     const data = localStorage.getItem("ticketData");
     if (data) {
-      setInput(JSON.parse(data));
+      const parsedData = JSON.parse(data);
+    // Only update state if the parsed data is different from the current input
+      if (parsedData.from !== input.from || parsedData.to !== input.to) {
+      setInput(parsedData);
+    }
     }
 
     fetchData();
-  }, [user.token, navigate]);
+  }, [user.token, navigate, input.from, input.to]);
 
   const fetchData = async () => {
     try {
